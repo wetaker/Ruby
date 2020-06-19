@@ -1,6 +1,6 @@
 class Board
 	attr_accessor :latestMove
-	@latestMove = [nil, nil]
+	@latestMove = [nil, nil] # Position of most recently played move
 
 
 	def initialize(arr = [[nil, nil, nil],[nil, nil, nil], [nil, nil, nil]])
@@ -13,15 +13,15 @@ class Board
 
 	end
 
-	def display()
+	def display() # Displays the board
 		p @rows[0]
 		p @rows[1]
 		p @rows[2]
 	end
 
-	def checkWin?()
+	def checkWin?() # Checks if latest move is a winning move.
+
 		win = false
-		# Checks if latest move is a winning move.
 		return true if verticalWin?()
 		return true if horizontalWin?()
 		return true if diagonalWin1?()
@@ -29,7 +29,7 @@ class Board
 		return false
 	end
 
-	def verticalWin?()
+	def verticalWin?() 
 		x, y = @latestMove.map {|z| z-1} # Subtract 1 to convert to indexing starting at 0
 		for i in 0..2
 			return false if @rows[(x+i)%3][y].nil? || @rows[x][y] != @rows[(x+i)%3][y]
@@ -75,12 +75,6 @@ class Board
 
 end
 
-rows = [['X','X', 'X'], [nil ,'X', nil], ['O','O','X']]
-board = Board.new(rows)
-board.latestMove = [1,1]
-board.display()
-p board.diagonalWin1?()
-p board.diagonalWin2?()
 
 
 

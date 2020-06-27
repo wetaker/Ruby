@@ -1,7 +1,7 @@
 
 def stock_picker(days)
 	# Takes array of days, for each day, loop over the following days and find the maximum followingDayPrice - dayPrice
-	# Stores the data as a hash: Key = dayIndex, value = maximizer index
+	# Stores the data as a hash: Key = dayIndex, value = corresponding maximizer index
 	dict = {}
 	days.each_with_index do |day_price, ind|
 		max_diff = -20
@@ -15,7 +15,8 @@ def stock_picker(days)
 		dict[ind] = max_ind
 	end
 	p dict
-	# Have hash of optimizing day for each day, lets go over those and find the total maximum difference
+
+	# Have hash of maximizing day index for each day index, lets go over those and find the total maximum difference
 	max_p = days[dict[0]] - days[0]
 	indices = [0, dict[0]]
 	dict.each do |low_ind, high_ind|

@@ -8,10 +8,20 @@ class BST
 	end
 
 
+	# def build_tree(arr)
+	# 	arr.sort!
+	# 	root = Node.new(arr[(arr.length / 2).floor])
+	# 	arr.each {|val| add(root, val)}
+	# 	return root
+	# end
+
 	def build_tree(arr)
+		return if arr.nil? || arr.length <= 0
 		arr.sort!
+		arr.uniq!
 		root = Node.new(arr[(arr.length / 2).floor])
-		arr.each {|val| add(root, val)}
+		root.left = build_tree(arr.slice(0...(arr.length/2).floor))
+		root.right = build_tree(arr.slice((arr.length/2).floor+1...arr.length))
 		return root
 	end
 
@@ -33,13 +43,7 @@ class BST
 		end
 	end
 
-	# def inorder(root = @root)
-	# 	if root
-	# 		inorder(root.left)
-	# 		puts(root.value)
-	# 		inorder(root.right)
-	# 	end
-	# end
+
 
 	def insert(val, root = @root)
 		if val > root.value
@@ -128,7 +132,7 @@ class BST
 			root = remaining.pop()
 			remaining.push(root.left) if root.left
 			remaining.push(root.right) if root.right
-			yield root
+			yield root if block_given?
 		end
 	end
 
@@ -154,35 +158,115 @@ class BST
 	end
 
 
-	class Node 
-		include Comparable
-		attr_accessor :value, :left, :right
-		def initialize(value)
-			@left = nil
-			@right = nil
-			@value = value
-		end
+	# def depth(node, root = @root)
+	# 	return false if node.nil?
+	# 	depth = 0
+	# 	while root != nil || root != node
+	# 		if node.value > root.value
+	# 			root = root.right
+	# 			depth += 1 
+	# 		elsif node.value < root.value
+	# 			root = root.left
+	# 			depth += 1
+	# 		else
+	# 			return depth
+	# 		end
+	# 	end
+	# 	return false
+	# end
 
-		# def <=>(other)
-		# 	@value <=> other.value
-		# end
+
+	def depth(root)
+		return 0 if root.nil?
+
+		left_depth = depth(root.left)
+		right_depth = depth(root.right)
+
+		if left_depth > right_depth
+			return left_depth + 1
+		else
+			return right_depth + 1
+		end
 	end
+
+	def balanced?(root = @root)
+		return true if root.nil?
+		left = balanced?(root.left)
+		right = balanced?(root.right)
+		return left && right && (depth(root.left) - depth(root.right)).abs <= 1
+	end
+
+
+	def rebalance!()
+		arr = []
+		level_order {|x| arr.push(x.value)}
+		@root = build_tree(arr)
+	end
+
 
 end
 
+class Node 
+	attr_accessor :value, :left, :right
+	def initialize(value)
+		@left = nil
+		@right = nil
+		@value = value
+	end
 
 
-test_arr = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324]
-tree = BST.new(test_arr)
-tree.insert(100, tree.root)
-p "-------"
+end
+
+# Driver script
+arr = Array.new(15) {rand(1..100)}
+tree = BST.new(arr)
+puts "Balanced: #{tree.balanced?}"
+puts " - - - Level - - - - - - - - - - - - - - - -"
+tree.level_order {|node| puts node.value}
+
+puts " - - - Preorder - - - - - - - - - - - - - - - -"
+tree.preorder {|node| puts node.value}
+
+puts " - - - Inorder - - - - - - - - - - - - - - - -"
+tree.inorder {|node| puts node.value}
+
+puts " - - - Postorder - - - - - - - - - - - - - - - -"
+tree.postorder {|node| puts node.value}
+
+puts 
+puts "Unbalancing..."
+tree.insert(500)
+tree.insert(501)
+tree.insert(502)
+tree.insert(503)
+tree.insert(504)
+puts "Balanced: #{tree.balanced?}"
+
+puts "Rebalancing..."
+tree.rebalance!()
+puts "Balanced: #{tree.balanced?}"
+puts
 
 
-arr = []
-tree.level_order {|x| p x.value}
+puts " - - - Level - - - - - - - - - - - - - - - -"
+tree.level_order {|node| puts node.value}
 
-p "------"
-tree.inorder {|x| p x.value}
+puts " - - - Preorder - - - - - - - - - - - - - - - -"
+tree.preorder {|node| puts node.value}
+
+puts " - - - Inorder - - - - - - - - - - - - - - - -"
+tree.inorder {|node| puts node.value}
+
+puts " - - - Postorder - - - - - - - - - - - - - - - -"
+tree.postorder {|node| puts node.value}
+
+
+
+
+
+
+
+
 
 
 
